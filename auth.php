@@ -141,7 +141,7 @@ class auth_plugin_emailotp extends auth_plugin_base {
             $fields += array_filter(
                 (new \auth_emailotp\fields_mapper(
                     $this->config->fieldsmapping_pattern,
-                    strtolower($username),
+                    strtolower($username)
                 ))->map(array_map(function($mapping) {
                     return trim($mapping);
                 }, explode(PHP_EOL, $this->config->fieldsmapping_mapping))),
