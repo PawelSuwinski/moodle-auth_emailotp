@@ -52,6 +52,17 @@ if ($ADMIN->fulltree) {
         get_string('fieldsmapping_mapping', 'auth_emailotp'),
         get_string('fieldsmapping_mapping_help', 'auth_emailotp'), '', PARAM_RAW_TRIMMED));
 
+   $settings->add(new admin_setting_heading('auth_emailotp/security',
+        new lang_string('security', 'admin'), '')); 
+
+    $settings->add(new admin_setting_configtext('auth_emailotp/revokethreshold',
+        get_string('revokethreshold', 'auth_emailotp'),
+        get_string('revokethreshold_help', 'auth_emailotp'), 3, PARAM_INT));
+
+    $settings->add(new admin_setting_configtext('auth_emailotp/minrequestperiod',
+        get_string('minrequestperiod', 'auth_emailotp'),
+        get_string('minrequestperiod_help', 'auth_emailotp'), 120, PARAM_INT));
+
     // Display locking / mapping of profile fields.
     $authplugin = get_auth_plugin('emailotp');
     display_auth_lock_options($settings, $authplugin->authtype, $authplugin->userfields,

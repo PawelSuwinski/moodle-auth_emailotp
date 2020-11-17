@@ -79,9 +79,11 @@ class auth_plugin_emailotp extends auth_plugin_base {
         // OTP already generated and base credentials matches.
         if (isset($_SESSION[self::COMPONENT_NAME]) &&
                 $_SESSION[self::COMPONENT_NAME]['credentials'] === static::get_credentials($username)) {
-            return empty($password)
-                ? (bool) $this->redirect($username, notification::NOTIFY_INFO)
-                : password_verify($password, $_SESSION[self::COMPONENT_NAME]['password']);
+            if (empty($password)) {
+                return (bool) $this->redirect($username, notification::NOTIFY_INFO);
+            } else if (password_verify($password, $_SESSION[self::COMPONENT_NAME]['password'])) {
+                return true;
+            } 
         }
         // OTP request - do not proceed on preventaccountcreation when user not exits.
         if (!isset($_SESSION[self::COMPONENT_NAME]) && empty($password) && (
@@ -95,6 +97,18 @@ class auth_plugin_emailotp extends auth_plugin_base {
                 ? notification::NOTIFY_SUCCESS
                 : notification::NOTIFY_ERROR
             );
+        }
+        // OTP exits but validation failed - reset if revoke threshold is set.
+        if (isset($_SESSION[self::COMPONENT_NAME])) {
+            $_SESSION[self::COMPONENT_NAME]['login_failed_count']++;
+            if (!empty($this->config->revokethreshold) && 
+                    $_SESSION[self::COMPONENT_NAME]['login_failed_count'] >= $this->config->revokethreshold) {
+                unset($_SESSION[self::COMPONENT_NAME]);
+                \core\notification::add(
+                    (string)new lang_string('otpinvalidated', self::COMPONENT_NAME, null, $CFG->lang),
+                    notification::NOTIFY_WARNING
+                );
+            }
         }
         return false;
     }
@@ -181,6 +195,7 @@ class auth_plugin_emailotp extends auth_plugin_base {
         $_SESSION[self::COMPONENT_NAME] = array(
             'credentials' => static::get_credentials($username),
             'password'    => password_hash($newpassword, PASSWORD_DEFAULT),
+            'login_failed_count' => 0,
         );
         $a = (object)array(
             'username' => $username,
