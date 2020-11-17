@@ -93,10 +93,14 @@ class auth_plugin_emailotp extends auth_plugin_base {
                     'auth'       => $this->authtype,
                     'deleted'    => 0,
                 ]))) {
-            $this->redirect($username, $this->gen_otp($username)
-                ? notification::NOTIFY_SUCCESS
-                : notification::NOTIFY_ERROR
-            );
+            if ($this->gen_otp($username)) {
+                \auth_emailotp\event\otp_generated::create(array(
+                    'other' => array('email' => $username),
+                ))->trigger();
+                $this->redirect($username, notification::NOTIFY_SUCCESS);
+            } else { 
+                $this->redirect($username, notification::NOTIFY_ERROR);
+            }
         }
         // OTP exits but validation failed - reset if revoke threshold is set.
         if (isset($_SESSION[self::COMPONENT_NAME])) {
@@ -105,9 +109,12 @@ class auth_plugin_emailotp extends auth_plugin_base {
                     $_SESSION[self::COMPONENT_NAME]['login_failed_count'] >= $this->config->revokethreshold) {
                 unset($_SESSION[self::COMPONENT_NAME]);
                 \core\notification::add(
-                    (string)new lang_string('otpinvalidated', self::COMPONENT_NAME, null, $CFG->lang),
+                    (string)new lang_string('otprevoked', self::COMPONENT_NAME, null, $CFG->lang),
                     notification::NOTIFY_WARNING
                 );
+                \auth_emailotp\event\otp_revoked::create(array(
+                    'other' => array('email' => $username),
+                ))->trigger();
             }
         }
         return false;

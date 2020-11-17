@@ -23,20 +23,22 @@
  */
 
 $string['pluginname'] = 'Email OTP';
+$string['eventotpgenerated'] = 'Password generated';
+$string['eventotprevoked'] = 'Password revoked';
 $string['otpgeneratedsubj'] = 'One-time password';
 $string['otpgeneratedtext'] = 'One-time password for current session: {$a->password}';
 $string['otpsentsuccess'] = 'One-time password was sent to given email.';
 $string['otpsenterror'] = 'An error occurred while sending one-time password.';
 $string['otpsentinfo'] = 'One-time password for current session was already generated and sent to email.';
-$string['otpinvalidated'] = 'Previously generated password has been revoked due to exceeding the login failure threshold.';
-$string['optperioderror'] = 'Minim period after which another password can be generated not preserved. Try again later.';
+$string['otprevoked'] = 'Previously generated password has been revoked due to exceeding the login failure threshold.';
+$string['otpperioderror'] = 'Minim period after which another password can be generated not preserved. Try again later.';
 $string['revokethreshold'] = 'Revoke threshold';
 $string['revokethreshold_help'] = 'Login failures limit causing revoke of the generated password (0 - unlimited).';
 $string['minrequestperiod'] = 'Minium period';
 $string['minrequestperiod_help'] = 'A time in seconds after which another password can be generated.';
 $string['fieldsmapping'] = 'User profile fields mapping';
 $string['fieldsmapping_pattern'] = 'Pattern';
-$string['fieldsmapping_pattern_help'] = 'Capturing groups PCRE patttern.';
+$string['fieldsmapping_pattern_help'] = 'Capturing groups PCRE pattern.';
 $string['fieldsmapping_mapping'] = 'Mapping';
 $string['fieldsmapping_mapping_help'] = 'Mapping expressions.';
 $string['fieldsmapping_help'] = <<<'EOT'

@@ -23,13 +23,15 @@
  */
 
 $string['pluginname'] = 'Email OTP';
+$string['eventotpgenerated'] = 'Hasło wynegerowano';
+$string['eventotprevoked'] = 'Hasło unieważniono';
 $string['otpgeneratedsubj'] = 'Hasło jednorazowe';
 $string['otpgeneratedtext'] = 'Hasło jednorazowe dla bieżącej sesji: {$a->password}';
 $string['otpsentsuccess'] = 'Hasło jednorazowe zostało wysłane na podany adres email.';
 $string['otpsenterror'] = 'Wystąpił błąd podczas wysyłania hasła jednorazowego.';
 $string['otpsentinfo'] = 'Hasło jednorazowe dla bieżącej sesji już zostało wygenerowane i wysłane.';
 $string['otpinvalidated'] = 'Poprzednio wygenerowane hasło zostało unieważnione z powodu przekroczenia limitu niepoprawnych logowań.';
-$string['optperioderror'] = 'Nie zachowany minimalny odstęp, po którym kolejne hasło może być wygenerowane. Spróbuj ponownie później.';
+$string['otpperioderror'] = 'Nie zachowany minimalny odstęp, po którym kolejne hasło może być wygenerowane. Spróbuj ponownie później.';
 $string['revokethreshold'] = 'Próg nieważnienia';
 $string['revokethreshold_help'] = 'Limit nieudanych logowań unieważniających wygenerowane hasło (0 - bez limitu).';
 $string['minrequestperiod'] = 'Minimalny odstęp';
