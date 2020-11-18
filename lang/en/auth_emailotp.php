@@ -52,7 +52,6 @@ Pattern:<br />
 
 Mapping:<br />
 <pre>
-username:FIRST_LAST
 firstname:FIRST:ucfirst
 lastname:LAST:ucfirst
 institution:COMPANY:strtoupper
@@ -60,11 +59,9 @@ institution:COMPANY:strtoupper
 
 <p>maps <em>my.name@corp.com</em> to:</p>
 
-username: my_name<br />
 firstname: My<br />
 lastname: Name<br />
 institution: CORP<br />
 
-<p>Allowed modifiers: ucfirst, ucwords, strtoupper. Without mapping of
-<em>username</em> field whole email address is taken as username.</p>
+<p>Allowed modifiers: ucfirst, ucwords, strtoupper.</p>
 EOT;

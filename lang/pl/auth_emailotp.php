@@ -52,7 +52,6 @@ Wzorzec:<br />
 
 Mapowanie:<br />
 <pre>
-username:FIRST_LAST
 firstname:FIRST:ucfirst
 lastname:LAST:ucfirst
 institution:COMPANY:strtoupper
@@ -60,12 +59,9 @@ institution:COMPANY:strtoupper
 
 <p>odwzoruje <em>my.name@corp.com</em> na:</p>
 
-username: my_name<br />
 firstname: My<br />
 lastname: Name<br />
 institution: CORP<br />
 
-<p>Dozwolone modyfikatory: ucfirst, ucwords, strtoupper. Przy braku mapowania
-pola <em>username</em> domyślnie cały adres email jest traktowany jako nazwa
-użytkownika.</p>
+<p>Dozwolone modyfikatory: ucfirst, ucwords, strtoupper.</p>
 EOT;
