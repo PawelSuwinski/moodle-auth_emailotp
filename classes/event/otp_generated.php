@@ -35,13 +35,13 @@ defined('MOODLE_INTERNAL') || die();
  */
 class otp_generated extends \core\event\base {
 
-    protected static $crud = 'c';
+    protected const CRUD = 'c';
 
     /**
      * {@inheritdoc}
      */
     protected function init() {
-        $this->data['crud'] = static::$crud; 
+        $this->data['crud'] = static::CRUD;
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
     }

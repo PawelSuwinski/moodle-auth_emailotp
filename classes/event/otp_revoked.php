@@ -34,5 +34,5 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class otp_revoked extends otp_generated {
-    protected static $crud = 'd';
+    protected const CRUD = 'd';
 }
