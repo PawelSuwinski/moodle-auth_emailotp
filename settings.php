@@ -53,15 +53,27 @@ if ($ADMIN->fulltree) {
         get_string('fieldsmapping_mapping_help', 'auth_emailotp'), '', PARAM_RAW_TRIMMED));
 
    $settings->add(new admin_setting_heading('auth_emailotp/security',
-        new lang_string('security', 'admin'), '')); 
+        new lang_string('security', 'admin'), ''));
 
     $settings->add(new admin_setting_configtext('auth_emailotp/revokethreshold',
         get_string('revokethreshold', 'auth_emailotp'),
         get_string('revokethreshold_help', 'auth_emailotp'), 3, PARAM_INT));
 
-    $settings->add(new admin_setting_configtext('auth_emailotp/minrequestperiod',
+    $settings->add(new class(
+        'auth_emailotp/minrequestperiod',
         get_string('minrequestperiod', 'auth_emailotp'),
-        get_string('minrequestperiod_help', 'auth_emailotp'), 120, PARAM_INT));
+        get_string('minrequestperiod_help', 'auth_emailotp')
+    ) extends admin_setting_configtext {
+        public function __construct($name, $visiblename, $description) {
+            $log_reader = reset(get_log_manager()->get_readers('\core\log\sql_reader'));
+            parent::__construct($name, $visiblename, $description, $log_reader ? 120 : 0, PARAM_INT);
+            if(!$log_reader && !empty($this->get_setting())) {
+                $this->description .= ' '.get_string('logstorerequired', 'auth_emailotp',
+                    (string)new moodle_url('/admin/settings.php', ['section' => 'managelogging'])
+                );
+            }
+        }
+    });
 
     // Display locking / mapping of profile fields.
     $authplugin = get_auth_plugin('emailotp');

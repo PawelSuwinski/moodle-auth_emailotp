@@ -31,11 +31,12 @@ $string['otpsentsuccess'] = 'Hasło jednorazowe zostało wysłane na podany adre
 $string['otpsenterror'] = 'Wystąpił błąd podczas wysyłania hasła jednorazowego.';
 $string['otpsentinfo'] = 'Hasło jednorazowe dla bieżącej sesji już zostało wygenerowane i wysłane.';
 $string['otpinvalidated'] = 'Poprzednio wygenerowane hasło zostało unieważnione z powodu przekroczenia limitu niepoprawnych logowań.';
-$string['otpperioderror'] = 'Nie zachowany minimalny odstęp, po którym kolejne hasło może być wygenerowane. Spróbuj ponownie później.';
+$string['otpperiodwarning'] = 'Nie zachowany minimalny odstęp, po którym kolejne hasło może być wygenerowane. Spróbuj ponownie później.';
 $string['revokethreshold'] = 'Próg nieważnienia';
 $string['revokethreshold_help'] = 'Limit nieudanych logowań unieważniających wygenerowane hasło (0 - bez limitu).';
 $string['minrequestperiod'] = 'Minimalny odstęp';
-$string['minrequestperiod_help'] = 'Czas w sekundach, po którym kolejne hasło może być wygenerowane.';
+$string['minrequestperiod_help'] = 'Czas w sekundach, po którym kolejne hasło może być wygenerowane (0 - nieograniczony). Wymaga działającego loggera.';
+$string['logstorerequired'] = '<b>Uwaga: logger nieaktywny! <a href="{$a}">Aktywuj logger</a> albo ustaw czas na 0.</b>';
 $string['fieldsmapping'] = 'Mapowanie pól profilu użytkownika';
 $string['fieldsmapping_pattern'] = 'Wzorzec';
 $string['fieldsmapping_pattern_help'] = 'Grupujące wyrażenie regularne PCRE.';
@@ -46,11 +47,12 @@ $string['fieldsmapping_help'] = <<<'EOT'
 
 Wzorzec:<br />
 <pre>
-'#/?P<FIRST>[^\.]+)\.(?P<LAST>[^@]+)@(?P<COMPANY>[^\.]+).*#',
+'#/?P&lt;FIRST&gt;[^\.]+)\.(?P&lt;LAST&gt;[^@]+)@(?P&lt;COMPANY&gt;[^\.]+).*#',
 </pre>
 
 Mapowanie:<br />
 <pre>
+username:FIRST_LAST
 firstname:FIRST:ucfirst
 lastname:LAST:ucfirst
 institution:COMPANY:strtoupper
@@ -58,9 +60,12 @@ institution:COMPANY:strtoupper
 
 <p>odwzoruje <em>my.name@corp.com</em> na:</p>
 
+username: my_name<br />
 firstname: My<br />
 lastname: Name<br />
 institution: CORP<br />
 
-<p>Dozwolone modyfikatory: ucfirst, ucwords, strtoupper.</p>
+<p>Dozwolone modyfikatory: ucfirst, ucwords, strtoupper. Przy braku mapowania
+pola <em>username</em> domyślnie cały adres email jest traktowany jako nazwa
+użytkownika.</p>
 EOT;

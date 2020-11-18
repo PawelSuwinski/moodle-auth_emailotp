@@ -31,11 +31,12 @@ $string['otpsentsuccess'] = 'One-time password was sent to given email.';
 $string['otpsenterror'] = 'An error occurred while sending one-time password.';
 $string['otpsentinfo'] = 'One-time password for current session was already generated and sent to email.';
 $string['otprevoked'] = 'Previously generated password has been revoked due to exceeding the login failure threshold.';
-$string['otpperioderror'] = 'Minim period after which another password can be generated not preserved. Try again later.';
+$string['otpperiodwarning'] = 'Minim period after which another password can be generated not preserved. Try again later.';
 $string['revokethreshold'] = 'Revoke threshold';
 $string['revokethreshold_help'] = 'Login failures limit causing revoke of the generated password (0 - unlimited).';
 $string['minrequestperiod'] = 'Minium period';
-$string['minrequestperiod_help'] = 'A time in seconds after which another password can be generated.';
+$string['minrequestperiod_help'] = 'A time in seconds after which another password can be generated (0 - unrestricted). Enabled logstore required.';
+$string['logstorerequired'] = '<b>Notice: no working logstore! <a href="{$a}">Enable logstore</a> or set time to 0.</b>';
 $string['fieldsmapping'] = 'User profile fields mapping';
 $string['fieldsmapping_pattern'] = 'Pattern';
 $string['fieldsmapping_pattern_help'] = 'Capturing groups PCRE pattern.';
@@ -46,11 +47,12 @@ $string['fieldsmapping_help'] = <<<'EOT'
 
 Pattern:<br />
 <pre>
-'#/?P<FIRST>[^\.]+)\.(?P<LAST>[^@]+)@(?P<COMPANY>[^\.]+).*#',
+'#/?P&lt;FIRST&gt;[^\.]+)\.(?P&lt;LAST&gt;[^@]+)@(?P&lt;COMPANY&gt;[^\.]+).*#',
 </pre>
 
 Mapping:<br />
 <pre>
+username:FIRST_LAST
 firstname:FIRST:ucfirst
 lastname:LAST:ucfirst
 institution:COMPANY:strtoupper
@@ -58,9 +60,11 @@ institution:COMPANY:strtoupper
 
 <p>maps <em>my.name@corp.com</em> to:</p>
 
+username: my_name<br />
 firstname: My<br />
 lastname: Name<br />
 institution: CORP<br />
 
-<p>Allowed modifiers: ucfirst, ucwords, strtoupper.</p>
+<p>Allowed modifiers: ucfirst, ucwords, strtoupper. Without mapping of
+<em>username</em> field whole email address is taken as username.</p>
 EOT;
