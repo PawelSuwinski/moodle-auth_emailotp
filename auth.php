@@ -80,10 +80,10 @@ class auth_plugin_emailotp extends auth_plugin_base {
         if (isset($_SESSION[self::COMPONENT_NAME]) &&
                 $_SESSION[self::COMPONENT_NAME]['credentials'] === static::get_credentials($username)) {
             if (empty($password)) {
-                return (bool) $this->redirect($username, notification::NOTIFY_INFO);
+                return (bool) $this->redirect($username, 'otpsent', notification::NOTIFY_INFO);
             } else if (password_verify($password, $_SESSION[self::COMPONENT_NAME]['password'])) {
                 return true;
-            } 
+            }
         }
         // OTP request - do not proceed on preventaccountcreation when user not exits.
         if (!isset($_SESSION[self::COMPONENT_NAME]) && empty($password) && (
@@ -93,23 +93,24 @@ class auth_plugin_emailotp extends auth_plugin_base {
                     'auth'       => $this->authtype,
                     'deleted'    => 0,
                 ]))) {
-            if ($this->gen_otp($username)) {
+            if (!$this->min_request_period_fulfilled($username)) {
+                $this->redirect($username, 'otpperiod', notification::NOTIFY_WARNING);
+            } else if ($this->gen_otp($username)) {
                 \auth_emailotp\event\otp_generated::create(array(
                     'other' => array('email' => $username),
                 ))->trigger();
-                $this->redirect($username, notification::NOTIFY_SUCCESS);
-            } else { 
-                $this->redirect($username, notification::NOTIFY_ERROR);
+                $this->redirect($username, 'otpsent', notification::NOTIFY_SUCCESS);
+            } else {
+                $this->redirect($username, 'otpsent', notification::NOTIFY_ERROR);
             }
         }
         // OTP exits but validation failed - reset if revoke threshold is set.
         if (isset($_SESSION[self::COMPONENT_NAME])) {
             $_SESSION[self::COMPONENT_NAME]['login_failed_count']++;
-            if (!empty($this->config->revokethreshold) && 
+            if (!empty($this->config->revokethreshold) &&
                     $_SESSION[self::COMPONENT_NAME]['login_failed_count'] >= $this->config->revokethreshold) {
                 unset($_SESSION[self::COMPONENT_NAME]);
-                \core\notification::add(
-                    (string)new lang_string('otprevoked', self::COMPONENT_NAME, null, $CFG->lang),
+                \core\notification::add(get_string('otprevoked', self::COMPONENT_NAME),
                     notification::NOTIFY_WARNING
                 );
                 \auth_emailotp\event\otp_revoked::create(array(
@@ -216,12 +217,9 @@ class auth_plugin_emailotp extends auth_plugin_base {
             'email'     => $username,
         ),
         core_user::get_support_user(),
-        sprintf(
-            '%s: %s',
-            format_string(get_site()->fullname),
-            (string)new lang_string('otpgeneratedsubj', self::COMPONENT_NAME, $a, $CFG->lang)
-        ),
-        (string)new lang_string('otpgeneratedtext', self::COMPONENT_NAME, $a, $CFG->lang)
+        sprintf('%s: %s', format_string(get_site()->fullname),
+            get_string('otpgeneratedsubj', self::COMPONENT_NAME, $a)),
+        get_string('otpgeneratedtext', self::COMPONENT_NAME, $a)
         );
     }
 
@@ -232,13 +230,35 @@ class auth_plugin_emailotp extends auth_plugin_base {
      * @param string $msg
      * @return void
      */
-    protected function redirect(string $username, string $msg) {
+    protected function redirect(string $username, string $msg, string $level) {
         global $CFG;
-        redirect(
-            get_login_url().'?username='.urlencode($username),
-            (string)new lang_string('otpsent'.$msg, self::COMPONENT_NAME, null, $CFG->lang),
-            null,
-            $msg
-        );
+        redirect(get_login_url().'?username='.urlencode($username),
+            get_string($msg.$level, self::COMPONENT_NAME), null, $level);
+    }
+
+    /**
+     * min_request_period_fulfilled
+     *
+     * @param string $email
+     * @return bool
+     */
+    protected function min_request_period_fulfilled(string $email) {
+        // Min request period security disabled.
+        if(empty($this->config->minrequestperiod)) {
+            return true;
+        }
+        // Log reader required - silently return failure on absence.
+        if(!$reader = reset(get_log_manager()->get_readers('\core\log\sql_reader'))) {
+            return false;
+        }
+        return $reader->get_events_select_count(
+            'component = ? AND action = ? AND timecreated >= ? AND other = ?',
+            array(
+                self::COMPONENT_NAME,
+                'generated',
+                time() - $this->config->minrequestperiod,
+                json_encode(['email' => $email]),
+            )
+        ) === 0;
     }
 }
