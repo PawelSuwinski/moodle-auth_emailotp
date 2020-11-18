@@ -205,21 +205,17 @@ class auth_plugin_emailotp extends auth_plugin_base {
             'password'    => password_hash($newpassword, PASSWORD_DEFAULT),
             'login_failed_count' => 0,
         );
-        $a = (object)array(
+        $user = (object)array(
+            'id'       => -1, // Fake due email_to_user() requirements.
+            'auth'     => $this->authtype,
             'username' => $username,
+            'email'     => $username,
             'password' => $newpassword,
         );
-        return email_to_user(
-        (object)array(
-            'id'        => -1,
-            'auth'      => $this->authtype,
-            'username ' => $username,
-            'email'     => $username,
-        ),
-        core_user::get_support_user(),
-        sprintf('%s: %s', format_string(get_site()->fullname),
-            get_string('otpgeneratedsubj', self::COMPONENT_NAME, $a)),
-        get_string('otpgeneratedtext', self::COMPONENT_NAME, $a)
+        return email_to_user($user, core_user::get_support_user(),
+            format_string(get_site()->fullname).': '.
+                get_string('otpgeneratedsubj', self::COMPONENT_NAME, $user),
+            get_string('otpgeneratedtext', self::COMPONENT_NAME, $user)
         );
     }
 
