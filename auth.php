@@ -244,11 +244,11 @@ class auth_plugin_emailotp extends auth_plugin_base {
      */
     protected function min_request_period_fulfilled(string $email) {
         // Min request period security disabled.
-        if(empty($this->config->minrequestperiod)) {
+        if (empty($this->config->minrequestperiod)) {
             return true;
         }
         // Log reader required - silently return failure on absence.
-        if(!$reader = reset(get_log_manager()->get_readers('\core\log\sql_reader'))) {
+        if (!$reader = reset(get_log_manager()->get_readers('\core\log\sql_reader'))) {
             return false;
         }
         return $reader->get_events_select_count(
