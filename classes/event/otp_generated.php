@@ -37,34 +37,22 @@ class otp_generated extends \core\event\base {
 
     protected const CRUD = 'c';
 
-    /**
-     * {@inheritdoc}
-     */
     protected function init() {
         $this->data['crud'] = static::CRUD;
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function get_name() {
         return get_string('eventotp'.substr(static::class, strrpos(static::class, '_') + 1),
             'auth_emailotp');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function get_description() {
         return sprintf('Password %s for \'%s\'', $this->action,
             $this->other['email']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function get_legacy_logdata() {
         return array(SITEID, 'auth_emailotp', $this->action, '',
             $this->other['email']);
