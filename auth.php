@@ -33,6 +33,7 @@ use core\output\notification;
  * Email OTP authentication plugin.
  *
  * @see self::user_login()
+ * @see self::get_user_field()
  * @package    auth_emailotp
  * @copyright  2020 Pawel Suwinski <psuw@wp.pl>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -63,9 +64,9 @@ class auth_plugin_emailotp extends auth_plugin_base {
     }
 
     /**
-     * Matches only valid and allowed email as username. Validates credentials
-     * and password if exists in current session or generates ones for session
-     * time on empty password treated as one-time password request.
+     * Matches only valid email from allowed domains. Validates credentials and
+     * password if exists in current session or generates ones for session time
+     * on empty password treated as one-time password request.
      *
      * @param string $username The username
      * @param string $password The password
@@ -73,7 +74,10 @@ class auth_plugin_emailotp extends auth_plugin_base {
      */
     public function user_login($username, $password) {
         global $CFG, $DB;
-        if (!validate_email($username) || email_is_not_allowed($username)) {
+        $email = validate_email($username)
+            ? $username // Email as username or signup on first login.
+            : $this->get_user_field($username, 'email'); // Standard login, existing user.
+        if (empty($email) || email_is_not_allowed($email)) {
             return false;
         }
         // OTP already generated and base credentials matches.
@@ -87,17 +91,12 @@ class auth_plugin_emailotp extends auth_plugin_base {
         }
         // OTP request - do not proceed on preventaccountcreation when user not exits.
         if (!isset($_SESSION[self::COMPONENT_NAME]) && empty($password) && (
-                empty($CFG->authpreventaccountcreation) || $DB->get_field('user', 'id', [
-                    'username'   => $username,
-                    'mnethostid' => $CFG->mnet_localhost_id,
-                    'auth'       => $this->authtype,
-                    'deleted'    => 0,
-                ]))) {
-            if (!$this->min_request_period_fulfilled($username)) {
+                empty($CFG->authpreventaccountcreation) || $this->get_user_field($username, 'id'))) {
+            if (!$this->min_request_period_fulfilled($email)) {
                 $this->redirect($username, 'otpperiod', notification::NOTIFY_WARNING);
-            } else if ($this->gen_otp($username)) {
+            } else if ($this->gen_otp($username, $email)) {
                 \auth_emailotp\event\otp_generated::create(array(
-                    'other' => array('email' => $username),
+                    'other' => array('email' => $email),
                 ))->trigger();
                 $this->redirect($username, 'otpsent', notification::NOTIFY_SUCCESS);
             } else {
@@ -114,37 +113,25 @@ class auth_plugin_emailotp extends auth_plugin_base {
                     notification::NOTIFY_WARNING
                 );
                 \auth_emailotp\event\otp_revoked::create(array(
-                    'other' => array('email' => $username),
+                    'other' => array('email' => $email),
                 ))->trigger();
             }
         }
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function is_synchronised_with_external() {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function is_internal() {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function can_be_manually_set() {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function user_authenticated_hook(&$user, $username, $password) {
         // Destroy credentials - is already used.
         if (isset($_SESSION[self::COMPONENT_NAME])) {
@@ -153,7 +140,13 @@ class auth_plugin_emailotp extends auth_plugin_base {
     }
 
     /**
-     * {@inheritdoc}
+     * get_userinfo 
+     *
+     * Signup and user creation on first login takes place only in case of
+     * using email address as username.
+     * 
+     * @param string $username 
+     * @return array
      */
     public function get_userinfo($username) {
         $this->get_custom_user_profile_fields();
@@ -195,9 +188,10 @@ class auth_plugin_emailotp extends auth_plugin_base {
      * gen_otp
      *
      * @param string $username
+     * @param string $email
      * @return bool
      */
-    protected function gen_otp(string $username) {
+    protected function gen_otp(string $username, string $email) {
         global $CFG;
         $newpassword = generate_password();
         $_SESSION[self::COMPONENT_NAME] = array(
@@ -209,7 +203,7 @@ class auth_plugin_emailotp extends auth_plugin_base {
             'id'       => -1, // Fake due email_to_user() requirements.
             'auth'     => $this->authtype,
             'username' => $username,
-            'email'     => $username,
+            'email'    => $email,
             'password' => $newpassword,
         );
         return email_to_user($user, core_user::get_support_user(),
@@ -256,5 +250,23 @@ class auth_plugin_emailotp extends auth_plugin_base {
                 json_encode(['email' => $email]),
             )
         ) === 0;
+    }
+
+    /**
+     * get_user_field
+     *
+     * @see moodle_database::get_field()
+     * @param string $username
+     * @param string $field
+     * @return mixed
+     */
+    protected function get_user_field(string $username, string $field) {
+        global $CFG, $DB;
+        return $DB->get_field('user', $field, array(
+            'username'   => $username,
+            'mnethostid' => $CFG->mnet_localhost_id,
+            'auth'       => $this->authtype,
+            'deleted'    => 0,
+        ));
     }
 }

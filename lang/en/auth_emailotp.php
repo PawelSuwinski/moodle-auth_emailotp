@@ -37,7 +37,7 @@ $string['revokethreshold_help'] = 'Login failures limit causing revoke of the ge
 $string['minrequestperiod'] = 'Minium period';
 $string['minrequestperiod_help'] = 'A time in seconds after which another password can be generated (0 - unrestricted). Enabled logstore required.';
 $string['logstorerequired'] = '<b>Notice: no working logstore! <a href="{$a}">Enable logstore</a> or set time to 0.</b>';
-$string['fieldsmapping'] = 'User profile fields mapping';
+$string['fieldsmapping'] = 'User profile fields mapping on signup';
 $string['fieldsmapping_pattern'] = 'Pattern';
 $string['fieldsmapping_pattern_help'] = 'Capturing groups PCRE pattern.';
 $string['fieldsmapping_mapping'] = 'Mapping';

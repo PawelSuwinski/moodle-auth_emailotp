@@ -37,7 +37,7 @@ $string['revokethreshold_help'] = 'Limit nieudanych logowań unieważniających 
 $string['minrequestperiod'] = 'Minimalny odstęp';
 $string['minrequestperiod_help'] = 'Czas w sekundach, po którym kolejne hasło może być wygenerowane (0 - nieograniczony). Wymaga działającego loggera.';
 $string['logstorerequired'] = '<b>Uwaga: logger nieaktywny! <a href="{$a}">Aktywuj logger</a> albo ustaw czas na 0.</b>';
-$string['fieldsmapping'] = 'Mapowanie pól profilu użytkownika';
+$string['fieldsmapping'] = 'Mapowanie pól profilu użytkownika podczas rejestracji';
 $string['fieldsmapping_pattern'] = 'Wzorzec';
 $string['fieldsmapping_pattern_help'] = 'Grupujące wyrażenie regularne PCRE.';
 $string['fieldsmapping_mapping'] = 'Mapowanie';
