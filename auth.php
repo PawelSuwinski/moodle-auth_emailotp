@@ -140,12 +140,12 @@ class auth_plugin_emailotp extends auth_plugin_base {
     }
 
     /**
-     * get_userinfo 
+     * get_userinfo
      *
      * Signup and user creation on first login takes place only in case of
      * using email address as username.
-     * 
-     * @param string $username 
+     *
+     * @param string $username
      * @return array
      */
     public function get_userinfo($username) {
