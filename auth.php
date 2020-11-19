@@ -18,6 +18,7 @@
  * Email OTP authentication plugin.
  *
  * @see self::user_login()
+ * @see self::get_user_field()
  * @package    auth_emailotp
  * @copyright  2020 Pawel Suwinski <psuw@wp.pl>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
