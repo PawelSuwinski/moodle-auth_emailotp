@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2020111803;        // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2020111900;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2018120304;        // Requires this Moodle version.
 $plugin->component = 'auth_emailotp';   // Full name of the plugin (used for diagnostics).
 $plugin->maturity  = MATURITY_STABLE;
