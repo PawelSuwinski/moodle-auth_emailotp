@@ -9,12 +9,12 @@ Additional security can be set:
 - *revoke threshold*: login failures limit causing revoke of the generated password
 - *minimum request period*: a time in seconds after which another password can be generated
 
-Signup and user creation on first login takes place only in case of using email
-as username (not to be confused with the `authloginviaemail` global setting) if
-not prevented (global setting `authpreventaccountcreation`) and parts of email
-address may be mapped to profile fields using PCRE expressions.
+Signup and user creation on first login if not prevented (global setting
+`authpreventaccountcreation`) takes place only in case of using email as
+username (not to be confused with the `authloginviaemail` global setting) and
+parts of email address may be mapped to profile fields using PCRE expressions.
 
 Auth instruction setting (global `auth_instructions`) is recommended depending
-on the adopted user account policy and plugin settings.
+on the adopted user account policy and plugin configuration.
 
 See also: `fieldsmapping_help` setting form for [mapping usage example](lang/en/auth_emailotp.php).
