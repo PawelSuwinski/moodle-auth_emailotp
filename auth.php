@@ -239,10 +239,9 @@ class auth_plugin_emailotp extends auth_plugin_base {
             return true;
         }
         // Log reader required - silently return failure on absence.
-        if (!$reader = reset(get_log_manager()->get_readers('\core\log\sql_reader'))) {
-            return false;
-        }
-        return $reader->get_events_select_count(
+        $readers = get_log_manager()->get_readers('\core\log\sql_reader');
+        $reader = reset($readers);
+        return $reader && $reader->get_events_select_count(
             'component = ? AND action = ? AND timecreated >= ? AND other = ?',
             array(
                 self::COMPONENT_NAME,

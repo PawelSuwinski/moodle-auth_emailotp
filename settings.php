@@ -65,7 +65,8 @@ if ($ADMIN->fulltree) {
         get_string('minrequestperiod_help', 'auth_emailotp')
     ) extends admin_setting_configtext {
         public function __construct($name, $visiblename, $description) {
-            $logreader = reset(get_log_manager()->get_readers('\core\log\sql_reader'));
+            $readers = get_log_manager()->get_readers('\core\log\sql_reader');
+            $logreader = reset($readers);
             parent::__construct($name, $visiblename, $description, $logreader ? 120 : 0, PARAM_INT);
             if (!$logreader && !empty($this->get_setting())) {
                 $this->description .= ' '.get_string('logstorerequired', 'auth_emailotp',
