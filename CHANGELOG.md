@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.2] - 2021-01-05
+
+### Fixed
+
+- docs: misspelled fields mapping PCRE pattern example (issue #1)
+
 
 ## [1.1.1] - 2020-11-26
 

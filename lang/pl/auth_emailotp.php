@@ -47,7 +47,7 @@ $string['fieldsmapping_help'] = <<<'EOT'
 
 Wzorzec:<br />
 <pre>
-'#/?P&lt;FIRST&gt;[^\.]+)\.(?P&lt;LAST&gt;[^@]+)@(?P&lt;COMPANY&gt;[^\.]+).*#',
+#/(?P&lt;FIRST&gt;[^\.]+)\.(?P&lt;LAST&gt;[^@]+)@(?P&lt;COMPANY&gt;[^\.]+).*#
 </pre>
 
 Mapowanie:<br />
